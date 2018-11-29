@@ -1,0 +1,94 @@
+1. Align your reads using MIXCR
+ 
+We use the IMGT database to align our reads. MIXCR offers a function to download the appropiate database to your computer. In your fastq folder run or follow documentation:
+ 
+mixcr importFromIMGT
+ 
+Next you have to press Enter. Then choose which organism your samples are derived from (i.e. 	12 for mus musculus). It will then ask you to give it one or more abbreviation names, you 	could just write „mus“ or „msu“ and press enter. You should now have several new IMGT related folders in your fastq folder.
+ 
+Now use following script:
+ 
+ALIGN_IMGT.sh foldername.of.run(i.e miseq346) LOCI(i.e TRB, TRD...) SPECIES(i.e mus or msu) ''prefix_of_file_name*''
+ 
+At $HOME/sequencing/foldername.of.run(i.e miseq346) you will now have a new folder named IMGT, which contains a folder named VDJRESULTS. This folder will contain your aligned reads in a VDJTOOLS format. This can now be used for automated or individual analysis.
+ 
+ 
+ 
+ 
+2. Automated analysis using VDJtools and tcR-Package
+ 
+First decide how many samples you want to analyse/compare with each other (max. 30, however many analysis and graphs will work for only a max. of 10). For instance, you might have 5 samples from one experiment you want to compare. Next, open any text editor (recommended: Note++). Open the script:
+ 
+	tcR_SCRIPT.R
+ 
+	You will see the source code for this script. 
+	You have to change certain things in this file. Firstly, you will see a long list that says:
+ 
+FILENAME1 <- args[8]
+FILENAME2 <- args[9]
+FILENAME3 <- args[10]
+FILENAME4 <- args[11]
+#FILENAME5 <- args[12]
+#FILENAME6 <- args[13]
+#FILENAME7 <- args[14]
+#FILENAME8 <- args[15]
+#FILENAME9 <- args[16]
+#FILENAME10 <- args[17]
+(...)
+ 
+All the lines that have a ‘#’ in the beginning are not executed. Remove ‘#’ or add ‘#’ so only as many lines as samples are executed.
+ 
+Do the same for the next list:
+FILE1 <- parse.vdjtools(FILENAME1)
+FILE2 <- parse.vdjtools(FILENAME2)
+FILE3 <- parse.vdjtools(FILENAME3)
+FILE4 <- parse.vdjtools(FILENAME4)
+#FILE5 <- parse.vdjtools(FILENAME5)
+#FILE6 <- parse.vdjtools(FILENAME6)
+(...)
+ 
+The next line will look something like this:
+ 
+Experiment <- list("1NAME" = FILE1, "2NAME" = FILE2, "3NAME" = FILE3, "4NAME" = FILE4)
+ 
+Here you have to choose any name you want and put a number before the name in an order 	you desire. This has to be in quotationmarks. This name has to be equal to the object FILE1, FILE2 etc. Remember the order, as you will have to type your filenames in this order when you run the script. Example for changing it for 3 samples:
+ 
+Experiment <- list(''1Injectionday'' = FILE1, ''2WT_CONTROL'' = FILE2, ''3Syngeneic'' = 	FILE3)
+	
+Save the file. Open a terminal and move to your VDJRESULTS folder with the VDJTOOLS formatted files you created earlier ($HOME/sequencing/YOURFOLDER/IMGT/VDJRESULTS). Run following script:
+ 
+	TCR_ANALYSIS.sh:
+	
+TCR_ANALYSIS.sh EXPNAME FOLDERNAME HUMAN/MOUSE FILENAME1 FILENAME2 FILENAME3 FILENAME4 (...)
+	
+	Here Filename1-4 are the names of the files in that folder that you want to analyse. You can use a „wildecard“ (*) to shorten the name. For instance the long filename:
+ 
+	CUT_200_IS008_S73_L001_R1_001.fastq.txt
+ 
+	can be shortend to:
+ 
+	CUT*IS008*.fastq or just *IS008* or even *.txt
+ 
+	The filenames have to end with “.txt”, otherwise the pipeline will exit early. 
+ 
+	But becareful. „*.fastq“ will now read ANY file that ends with „.fastq“. Thats why it is 	important to still give enough information when using the wildcard function.
+ 
+ 
+3. Normalise/Downsample your VDJfiles
+ 
+If you want to downsample your samples you can choose a read number to normalise all samples accordingly. You can do that by moving to the VDJRESULTS folder and running following script:
+ 
+DOWNSAMPLE.sh NUMBER_OF_READS_TO_DOWNSAMPLE FOLDERNAME
+ 
+The foldername is, again, the name of the folder in which all the data for that particular experiment are. This is found in $HOME/sequencing/FOLERNAME.
+ 
+Example on how to run it:
+ 
+DOWNSAMPLE.sh 10000 MyExperiment
+ 
+You will get new VDJfiles that are all downsampled to this specific number. 
+ 
+ 
+ 
+	
+

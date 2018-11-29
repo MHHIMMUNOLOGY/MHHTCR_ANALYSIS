@@ -1,0 +1,50 @@
+#how to look at the topN clones to find public clones
+
+#run Extract_CDR3_from_VDJ.sh
+
+#this will get the CDR3 AA sequence +the count
+
+#Put them in one folder and extract the files you want to work with
+
+#extract the topN (i.e top20)
+
+for i in FILE*;
+do
+  head -n 20 $i > top20_`basename $i`
+done
+
+#This file contains the counts calculated by VDJ. Remove Count.
+
+for i in top20*;
+do
+  cut -f 2 $i > AA_`basename $i`
+done
+
+#This file now might have AA sequence duplicates, as VDJ doesnt merge from AA sequence
+# but NT sequence (due to wobble base, one AA might be found several times). Remove duplicates:
+
+for i in AA_*;
+do
+  sort $i | uniq -c > uniq_`basename $i`
+done
+
+#This file now has one row with the count and one with the AA, again we just need the AA
+# Cut the second column again, however the sort and uniq sort always add 8 spaces.
+# This needs to be added to the cut command
+
+for i in uniq_*;
+do
+  cut -d' ' -f 8 $i > 2_`basename $i`
+done
+
+#now we have the correct file for every sample. Put them all in one file
+
+cat 2_* > POOLED
+
+#now merge them again
+
+sort POOLED | uniq -c | sort -nr > top20_POOLED_MERGED
+
+#This is the correct file. Remove unessecary spaces added by sort, uniq command
+
+sed 's/        //g' top20_POOLED_MERGED

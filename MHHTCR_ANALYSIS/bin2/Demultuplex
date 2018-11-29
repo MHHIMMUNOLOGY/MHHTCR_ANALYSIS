@@ -1,0 +1,66 @@
+#!/bin/sh
+
+########## Setting the variables for the Index Primer Reads ##########
+
+#i7 (INDEX1) (translated)
+MID701=TCGCCTTA
+MID702=CTAGTACG
+MID703=TTCTGCCT
+MID704=GCTCAGGA
+MID705=AGGAGTCC
+MID706=CATGCCTA
+MID707=GTAGAGAG
+MID708=CCTCTCTG
+MID709=AGCGTAGC
+MID710=CAGCCTCG
+MID711=TGCCTCTT
+MID712=TCCTCTAC
+
+#i5 (INDEX2) (translated and reversed)
+MID501=TCTTACGC
+MID502=ATAGAGAG
+MID503=AGAGGATA
+MID504=TCTACTCT
+MID505=CTCCTTAC
+MID506=TATGCAGT
+MID507=TACTCCTT
+MID508=AGGCTTAG
+
+
+#Move to the directory where you have the fastq files
+FASTQDIR=$PWD
+
+compgen -V | grep 'MID5*'
+
+#Combine R1 and R2 read
+# Unzip the .gz files from illumina:
+#zcat *R1*.fastq.z | paste - - - - > R1.fq1; zcat *R2*.fastq.z | paste - - - - > R2.fq1
+#Combine the R1 and R2 reads, as each line corresponds with each other
+paste *R1*.fastq *R2*.fastq > R12.fq1
+
+grep -A2 -B1 $MID701 R12.fq1 | grep -A2 -B1 $MID517 > MID701MID517-R12.fq1
+
+LN_MID7XX="$(wc -l $FASTQDIR/MID7XX | cut -d " " -f 1)"
+LN_MID5XX="$(wc -l $FASTQDIR/MID5XX | cut -d " " -f 1)"
+
+for ((i=1;i<=${LN_MID7XX};i++));
+do
+  MID7XX="$(head -n $i "$FASTQDIR/MID7XX" | tail -n 1 | cut -f 1)";
+  echo $MID7XX
+  for ((x=1;x<=${LN_MID5XX};x++));
+  do
+    MID5XX="$(head -n $x "$FASTQDIR/MID5XX" | tail -n 1 | cut -f 1)";
+    echo $MID5XX
+     grep -A2 -B1 $MID7XX R12.fq1 | grep -A2 -B1 $MID5XX > MID7${i}MID5${x}-R12.fq1
+     cut -f1-4 MID7${i}MID5${x}-R12.fq1 | sed 's/\t/\n/g' > MID7${i}MID5${x}-R1.fq
+     cut -f5-8 MID7${i}MID5${x}-R12.fq1 | sed 's/\t/\n/g' > MID7${i}MID5${x}-R2.fq
+     rm  MID7${i}MID5${x}-R12.fq1
+     echo "File MID7"${i}"MID5"${x}" is complete "
+  done
+done
+
+
+for ((x=1;x<=${LN_MID5XX};x++));
+do
+  echo $x
+done

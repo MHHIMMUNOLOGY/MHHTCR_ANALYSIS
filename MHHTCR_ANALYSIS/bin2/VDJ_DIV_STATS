@@ -1,0 +1,42 @@
+#!/bin/bash
+# VDJ Diversity STATS
+
+set -o xtrace
+set -o errexit
+set -o pipefail
+
+# Home for sequencing
+HOMEDIR=$HOME/sequencing
+
+# Folder of Miseq run -> $1 is the first string after bash script i.e typing 'PHB.sh $HOME/sequencing/miseq346'
+# into the commandline will run the script and save $1 as the string '$HOME/sequencing/miseq346'.
+# For this script always have a folder called "sequencing" in your home directory ($HOME/sequencing) and in there
+# for each directory create a folder for every run (i.e miseq346). In the command line run script like 'script.sh miseq346'
+SEQDIR=$HOMEDIR/$1
+
+# Directory for IMGT
+IMGTDIR=$SEQDIR/IMGT
+
+# Folder with 3_Nt files
+NTDIR=$IMGTDIR/3_Nt
+
+PROD=$NTDIR/productive
+
+# Directory of the vdj.jar file
+
+VDJDIR=$HOMEDIR/files_programs/vdjtools/vdjtools-1.1.10.jar
+
+# Directory of VDJ results
+
+VDJRESULTS=$IMGTDIR/VDJRESULTS
+
+############## Diversity Stats ##############
+
+for diversitystats in $VDJRESULTS/VDJTOOLS_*
+do
+  java -Xmx4G -jar $VDJDIR CalcDiversityStats $diversitystats CalcDiversityStats_`basename $diversitystats`
+done
+
+if [ ! -d $VDJRESULTS/DiversityStats ]; then mkdir -p $VDJRESULTS/DiversityStats; fi;
+
+mv *CalcDiversityStats* $VDJRESULTS/DiversityStats

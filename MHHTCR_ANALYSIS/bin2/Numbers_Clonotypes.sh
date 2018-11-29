@@ -1,0 +1,7 @@
+#!/bin/sh
+HOMEDIR=$HOME/sequencing
+SEQDIR=$HOMEDIR/$1
+IMGTDIR=$SEQDIR/IMGT
+VDJRESULTS=$IMGTDIR/VDJRESULTS
+
+wc -l $VDJRESULTS/*.txt > $VDJRESULTS/Number_clonotypes.txt

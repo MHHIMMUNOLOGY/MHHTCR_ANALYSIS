@@ -1,0 +1,57 @@
+How to install:
+
+First you have to make all installation scripts executable. Type following while in the installation folder:
+
+chmod +x *
+
+Then run the installation script while in the installation folder by typing:
+
+./INSTALLPIPELINE.sh
+
+Next you have to manually install R, VDJTOOLS and MIXCR:
+----------------------------------------------------------------------------------------------
+IMPORTANT: This script has been tested with R 3.4.0. Newer version may not work. To install R3.4.0 do following:
+
+Inside the MHH_TCRAnalysis folder move into the R3.4.0 folder or download the .tar.gz from here: https://cran.r-project.org/src/base/R-3/
+
+extract it and move into the directory from terminal. There type:
+
+./configure --with-readline=no --with-x=no --enable-R-shlib
+
+make
+
+sudo make install
+
+If there is a issue that says :  configure: error: "liblzma library and headers are required" then you probably deleted R before. 
+This problem was can be avoided by leaving a different R version previously installed, like R3.5.1, on the device and still installed this. 
+You can always install the latest R version with sud apt-get install r-base 
+
+
+----------------------------------------------------------------------------------------------
+If you are having problems with java, here is how you can manually install that:
+
+To make sure java is installed check with:
+
+java --version
+
+If its not installed it will usually tell you how you can install it. For example version 11:
+
+sudo apt-get install openjdk-11-jre-headless 
+----------------------------------------------------------------------------------------------
+Install and download VDJTOOLS and MIXCR. 
+
+If you want to check for new VDJTOOLS and MIXCR releases you can do that here:
+
+Download the latest VDJtools here:
+
+https://github.com/mikessh/vdjtools/releases
+
+When you download it to replace the old version, please rename it to just vdjtools.jar and replace it at $HOME/sequencing/files_programs/vdjtools
+
+Downlaod the latest MIXCR here:
+
+https://github.com/milaboratory/mixcr/releases
+When you download it to replace the old version, please rename it to just mixcr.jar and replace it at $HOME/sequencing/files_programs/mixcr
+
+
+
