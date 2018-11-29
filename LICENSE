@@ -6,6 +6,10 @@
  of this license document, but changing it is not allowed.
 
                             Preamble
+Please note, that these scripts are written to use third-party software 
+like VDJTOOLS, MIXCR and tcR R-Package. All of the software are free for 
+non-profit use, however, we refer to their respective licenses. 
+Please read those carefully, in addtion to this GNU License
 
   The GNU General Public License is a free, copyleft license for
 software and other kinds of works.
